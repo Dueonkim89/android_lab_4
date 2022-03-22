@@ -9,7 +9,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.codepath.recyclerviewlab.R.layout
 import com.codepath.recyclerviewlab.models.Article
 import com.codepath.recyclerviewlab.networking.CallbackResponse
@@ -18,8 +21,8 @@ import com.codepath.recyclerviewlab.networking.NYTimesApiClient
 
 class ArticleResultFragment: Fragment() {
     private val client = NYTimesApiClient()
-    //private val articleList: MutableList<Article> = ArrayList()
-    val Alist: List<Article> = ArrayList()
+    private var recyclerView: RecyclerView? = null
+    private var progressSpinner: ContentLoadingProgressBar? = null
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         val item = menu.findItem(R.id.action_search).actionView as SearchView
@@ -44,7 +47,13 @@ class ArticleResultFragment: Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(layout.fragment_article_result_list, container, false)
+        val view =  inflater.inflate(layout.fragment_article_result_list, container, false)
+        recyclerView = view.findViewById(R.id.list)
+        progressSpinner = view.findViewById(R.id.progress)
+        val linearLayoutManager = LinearLayoutManager(requireContext())
+        recyclerView?.layoutManager = linearLayoutManager
+        recyclerView?.adapter = ArticleResultsRecyclerViewAdapter()
+        return view
     }
 
     private fun loadNewArticlesByQuery(query: String) {
@@ -52,6 +61,10 @@ class ArticleResultFragment: Fragment() {
         // Toast.makeText(context, "Loading articles for \'$query\'", Toast.LENGTH_SHORT).show()
         client.getArticlesByQuery(object : CallbackResponse<List<Article>> {
             override fun onSuccess(model: List<Article>) {
+                val adapter = recyclerView?.adapter as ArticleResultsRecyclerViewAdapter?
+                adapter?.setNewArticles(model)
+                // notify dataset changed will tell your adapter that it's data has changed and refresh the view layout
+                adapter?.notifyDataSetChanged()
                 Log.d("ArticleResultFragment", "$model")
             }
 

@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.codepath.recyclerviewlab.models.Article
 
-class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ArticleResultsRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     internal class ArticleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val headlineView: TextView = view.findViewById(R.id.article_headline)
         val snippetView: TextView = view.findViewById(R.id.article_snippet)
