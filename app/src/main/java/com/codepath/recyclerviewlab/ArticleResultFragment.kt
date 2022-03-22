@@ -59,6 +59,7 @@ class ArticleResultFragment: Fragment() {
                 Toast.makeText(context, error!!.message, Toast.LENGTH_SHORT).show()
                 Log.d("ArticleResultFragment", "Failure loading articles " + error!!.message)
             }
+
         }, query)
 
     }
